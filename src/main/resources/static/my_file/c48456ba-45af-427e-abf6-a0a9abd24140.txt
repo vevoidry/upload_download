@@ -1,0 +1,18 @@
+--------
+【学习路线】
+vue
+elastic search
+rabbit mq
+
+-------------
+【技术栈】
+前端技术：html,css,javascript(ajax),jquery(ajax),bootstrap（页面的css效果）,thymeleaf（页面可以直接展示java数据）
+后端技术：spring boot,spring mvc,spring security（权限控制）,spring data jpa（作用等价于mybatis，但是写法更简洁）
+数据库：mysql
+其他：
+lombok：相关注解放在pojo类上的时候可以省略些getter和setter等方法。
+websocket：在双方私信的时候对方的数据能够立刻显示出来，类似于聊天效果。
+------
+
+
+

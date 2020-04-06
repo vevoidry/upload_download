@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主页</title>
+<!-- Bootstrap核心CSS -->
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<!-- JQuery -->
+<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+	<!-- 标题 -->
+	<h1 class="text-center" th:if="${title}!=null">
+		<a href="/">[[${title.name}]]</a>
+	</h1>
+	<div class="row">
+		<div class="col-lg-3"></div>
+		<div class="col-lg-6">
+			<!-- 若管理员未登录 -->
+			<div th:if="${session.user}==null">
+				<a href="/login"><button type="button" class="btn btn-primary">登录</button></a>
+			</div>
+			<!-- 若管理员已登录 -->
+			<div th:if="${session.user}!=null">
+				<!-- 按钮 -->
+				<a href="/titles"><button type="button" class="btn btn-primary">设置标题</button></a>
+				<a href="/authentication/logout"><button type="button"
+						class="btn btn-danger">退出</button></a>
+				<!-- 新建文件夹 -->
+				<script type="text/javascript">
+					var new_directory = function(directory_id) {
+						var name = $("#name_id").val().trim();
+						$.ajax({
+							url : "/upload/directory",
+							type : "POST",
+							data : {
+								"directory_id" : directory_id,
+								"name" : name
+							},
+							dataType : "JSON",
+							async : false,
+							success : function(result) {
+								console.log(result.new_url);
+								window.location.href = result.new_url;
+							},
+							error : function(err) {
+								console.log(err);
+								alert(err.responseJSON.message);
+							}
+						});
+					}
+					var new_file = function() {
+						$.ajax({
+							url : "/upload/file",
+							type : "POST",
+							cache : false,
+							data : new FormData($("#post_file")[0]),
+							dataType : "JSON",
+							async : false,
+							contentType : false,
+							processData : false,
+							success : function(result) {
+								console.log(result.new_url);
+								window.location.href = result.new_url;
+							},
+							error : function(err) {
+								alert(err.responseJSON.message);
+							}
+						});
+					}
+				</script>
+				<div class="input-group mb-3">
+					<input type="text" class="form-control" id="name_id"
+						placeholder="请输入新文件夹名">
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button"
+							th:onclick="'new_directory('+${directory_id}+')'">新建文件夹</button>
+					</div>
+				</div>
+				<!-- 上传文件 -->
+				<form action="/upload/file" method="post"
+					enctype="multipart/form-data" id="post_file">
+					<input type="text" name="directory_id" th:value="${directory_id}"
+						hidden />
+					<div class="input-group mb-3">
+						<input type="file" name="file_name" class="form-control" />
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" type="button"
+								onclick="new_file()">上传文件</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<!-- 父文件夹 -->
+			<div th:if="${parent_directory_id}!=-1">
+				<a th:href="${parent_directory_id}">...</a>
+			</div>
+			<!-- 文件夹 -->
+			<div th:each="directory:${directoryList}">
+				<span th:if="${session.user}!=null"> <a
+					th:href="'/up/'+${directory.id}"><img src="/image/arrow-up.svg" /></a><a
+					th:href="'/down/'+${directory.id}"> <img
+						src="/image/arrow-down.svg" />
+				</a><a th:href="'/delete/'+${directory.id}"> <img
+						src="/image/x-circle.svg" />
+				</a> <a th:href="'/update/'+${directory.id}"> <img
+						src="/image/edit.svg" />
+				</a>
+				</span> <a th:text="${directory.name}" th:href="${directory.id}"></a>
+			</div>
+			<!-- 文件 -->
+			<div th:each="file:${fileList}">
+				<span th:if="${session.user}!=null"> <a
+					th:href="'/up/'+${file.id}"><img src="/image/arrow-up.svg" /></a><a
+					th:href="'/down/'+${file.id}"> <img src="/image/arrow-down.svg" />
+				</a><a th:href="'/delete/'+${file.id}"> <img
+						src="/image/x-circle.svg" />
+				</a> <a th:href="'/update/'+${file.id}"> <img src="/image/edit.svg" />
+				</a>
+				</span> <a th:text="${file.name}" th:href="${file.id}"></a>
+			</div>
+		</div>
+		<div class="col-lg-3"></div>
+	</div>
+</body>

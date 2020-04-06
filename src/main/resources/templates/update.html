@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>管理员登录</title>
+<!-- Bootstrap核心CSS -->
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<!-- JQuery -->
+<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+	var changeName = function(id) {
+		var name = $("#name_id").val().trim();
+		$.ajax({
+			url : "/update",
+			type : "POST",
+			data : {
+				"id" : id,
+				"name" : name
+			},
+			dataType : "JSON",
+			async : false,
+			success : function(result) {
+				console.log(result.new_url);
+				window.location.href = result.new_url;
+			},
+			error : function(err) {
+				alert(err.responseJSON.message);
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<!-- 标题 -->
+	<h1 class="text-center" th:if="${title}!=null">
+		<a href="/">[[${title.name}]]</a>
+	</h1>
+	<!-- 修改 -->
+	<div class="row">
+		<div class="col-lg-3"></div>
+		<div class="col-lg-6">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" id="name_id"
+					th:value="${resource.name}">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button"
+						th:onclick="'changeName('+${resource.id}+')'">修改文件夹</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3"></div>
+	</div>
+</body>
